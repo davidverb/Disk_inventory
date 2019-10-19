@@ -2,7 +2,7 @@
 * This script creates the database named disk_inventoryDV 
 * Date		Programmer		Notes
 * -------------------------------------------------------
-* 10/11/2019 David Verbeck	Assignment4 creating select queries
+* 10/11/2019 David Verbeck	Assignment 4 creating select queries
 *
 ***********************************************************************/
 USE master;
