@@ -12,6 +12,7 @@ IF  DB_ID('disk_inventoryDV ') IS NOT NULL
     DROP DATABASE disk_inventoryDV;
 GO
 
+
 -- creates the database
 create database disk_inventoryDV;
 go
@@ -34,6 +35,7 @@ create table Group_info (
 groupID int NOT NULL PRIMARY KEY,
 artistID int NOT NULL references artist_info(artistID),
 group_name varchar(60) NOT NULL,
+artist_name varchar(60) NOT NULL
 );
 
 Create table CD_inventory (
@@ -41,6 +43,7 @@ CD_ID int NOT NULL PRIMARY KEY,
 borrowerID int references Borrower_info(borrowerID),
 artist_id int NOT NULL references Artist_info(artistID),
 group_id int references Group_info(groupID),
+release_date date NOT NULL,
 CD_name varchar(60) NOT NULL,
 status_type varchar(60) NOT NULL,
 genre varchar(30) NOT NULL
@@ -116,16 +119,18 @@ INSERT INTO [dbo].[Artist_info]
 GO
 
 --Inserting information into group_info table
+
 INSERT INTO [dbo].[Group_info]
            ([groupID]
            ,[artistID]
            ,[group_name]
-		   ,[artistName])
+           ,[artist_name])
      VALUES
            (1 ,3 ,'Los cantantes', 'Kelsea Villa')
-		   ,(2, 14, 'Bright Fairy')
-		   ,(3, 8, 'Cosmic Banjo')
+		   ,(2, 14, 'Bright Fairy', 'Samanta Mcnally')
+		   ,(3, 8, 'Cosmic Banjo', 'Cora Mccray' )
 GO
+
 
 -- Inseting information into CD_inventory table
 INSERT INTO [dbo].[CD_inventory]
@@ -133,30 +138,31 @@ INSERT INTO [dbo].[CD_inventory]
            ,[borrowerID]
            ,[artist_id]
            ,[group_id]
+		   ,[release_date]
            ,[CD_name]
            ,[status_type]
            ,[genre])
      VALUES
-           (1 ,1 ,1 ,null ,'Rainy Days' ,'Borrowed' ,'Alternative')
-		   ,(2 ,null ,2 ,null ,'Dime in two dozen' ,'Available' ,'Rock')
-		   ,(3 ,2 ,3 ,1 ,'Two to tango' ,'Borrowed' ,'Latin')
-		   ,(4 ,3 ,4 ,null ,'Damage control' ,'Borrowed' ,'Eletronic/Dance')
-		   ,(5 ,4 ,5 ,null ,'Time flies' ,'Borrowed' ,'Country')
-		   ,(6 ,null ,6 ,null ,'Moonquake' ,'Available' ,'Rock')
-		   ,(7 ,null ,7 ,null ,'Dreams and nightmares' ,'Available' ,'Rock')
-		   ,(8 ,7 ,8 ,3 ,'Your graciousness' ,'Borrowed' ,'Country')
-		   ,(9 ,9 ,9 ,null ,'Rainy Days' ,'Borrowed' ,'Alternative')
-		   ,(10 ,null ,10 ,null ,'Methodical madness' ,'Available' ,'Electronic/Dance')
-		   ,(11 ,null ,11 ,null ,'Crazy eyes' ,'Available' ,'Rock')
-		   ,(12 ,null ,12 ,null ,'Blinded by fame' ,'Available' ,'Country')
-		   ,(13 ,10 ,13 ,null ,'Honestly' ,'Borrowed' ,'Country')
-		   ,(14 ,15 ,14 ,2 ,'Wild goose chase' ,'Borrowed' ,'Folk')
-		   ,(15 ,14 ,15 ,null ,'Drawing board' ,'Borrowed' ,'Electronic/Dance')
-		   ,(16 ,20 ,16 ,null ,'Experience required' ,'Borrowed' ,'Electronic/Dance')
-		   ,(17 ,19 ,17 ,null ,'Eye of the camera' ,'Borrowed' ,'Electronic/Dance')
-		   ,(18 ,11 ,18 ,null ,'The fat lady sings' ,'Borrowed' ,'Alternative')
-		   ,(19 ,5 ,19 ,null ,'No justice' ,'Borrowed' ,'Rock')
-		   ,(20 ,8 ,20 ,null ,'No discounts' ,'Borrowed' ,'Rock')
+           (1 ,1 ,1 ,null,'10/16/2001','Rainy Days' ,'Borrowed' ,'Alternative')
+		   ,(2 ,null ,2 ,null ,'10/16/2006','Dime in two dozen' ,'Available' ,'Rock')
+		   ,(3 ,2 ,3 ,1 ,'10/16/2004','Two to tango' ,'Borrowed' ,'Latin')
+		   ,(4 ,3 ,4 ,null ,'10/16/2005','Damage control' ,'Borrowed' ,'Eletronic/Dance')
+		   ,(5 ,4 ,5 ,null ,'10/16/2006','Time flies' ,'Borrowed' ,'Country')
+		   ,(6 ,null ,6 ,null ,'10/16/2002','Moonquake' ,'Available' ,'Rock')
+		   ,(7 ,null ,7 ,null ,'10/16/2012','Dreams and nightmares' ,'Available' ,'Rock')
+		   ,(8 ,7 ,8 ,3 ,'10/16/2010','Your graciousness' ,'Borrowed' ,'Country')
+		   ,(9 ,9 ,9 ,null ,'10/16/2014','Rainy Days' ,'Borrowed' ,'Alternative')
+		   ,(10 ,null ,10 ,null ,'10/16/2011','Methodical madness' ,'Available' ,'Electronic/Dance')
+		   ,(11 ,null ,11 ,null ,'10/16/2011','Crazy eyes' ,'Available' ,'Rock')
+		   ,(12 ,null ,12 ,null ,'04/16/2010','Blinded by fame' ,'Available' ,'Country')
+		   ,(13 ,10 ,13 ,null ,'01/16/2011','Honestly' ,'Borrowed' ,'Country')
+		   ,(14 ,15 ,14 ,2 ,'06/16/2016','Wild goose chase' ,'Borrowed' ,'Folk')
+		   ,(15 ,14 ,15 ,null ,'10/16/2015','Drawing board' ,'Borrowed' ,'Electronic/Dance')
+		   ,(16 ,20 ,16 ,null ,'10/16/2014','Experience required' ,'Borrowed' ,'Electronic/Dance')
+		   ,(17 ,19 ,17 ,null ,'10/16/2013','Eye of the camera' ,'Borrowed' ,'Electronic/Dance')
+		   ,(18 ,11 ,18 ,null ,'10/16/2012','The fat lady sings' ,'Borrowed' ,'Alternative')
+		   ,(19 ,5 ,19 ,null ,'12/16/2012','No justice' ,'Borrowed' ,'Rock')
+		   ,(20 ,8 ,20 ,null ,'09/16/2013','No discounts' ,'Borrowed' ,'Rock')
 
 GO
 
@@ -167,22 +173,22 @@ INSERT INTO [dbo].[Borrowed_CD]
            ,[borrowed_date]
            ,[returned_date])
      VALUES
-           (1, 1 ,10/16/2019, null)
-		   ,(1, 1 ,05/21/2019, 07/28/2019)
-		   ,(2, 3 ,11/14/2019, null)
-		   ,(3, 4 ,8/16/2019, 11/16/2019)
-		   ,(4, 5 ,9/13/2019, null)
-		   ,(4, 8 ,9/14/2019, 05/21/2019)
-		   ,(7, 8 ,10/17/2019, null)
-		   ,(9, 9 ,10/30/2019, null)
-		   ,(10, 13 ,3/03/2019, null)
-		   ,(15, 14 ,6/06/2019, null)
-		   ,(14, 15 ,8/27/2019, null)
-		   ,(20, 16 ,3/10/2019, null)
-		   ,(19, 17 ,1/19/2019, null)
-		   ,(11, 18 ,7/02/2019, null)
-		   ,(5, 19 ,7/09/2019, null)
-		   ,(8, 20 ,7/04/2019, null)
+           (1, 1 ,'10/16/2019', null)
+		   ,(1, 1 ,'05/21/2019', '07/28/2019')
+		   ,(2, 3 ,'11/14/2019', null)
+		   ,(3, 4 ,'8/16/2019', '11/16/2019')
+		   ,(4, 5 ,'9/13/2019', null)
+		   ,(4, 8 ,'9/14/2019', '05/21/2019')
+		   ,(7, 8 ,'10/17/2019', null)
+		   ,(9, 9 ,'10/30/2019', null)
+		   ,(10, 13 ,'3/03/2019', null)
+		   ,(15, 14 ,'6/06/2019', null)
+		   ,(14, 15 ,'8/27/2019', null)
+		   ,(20, 16 ,'3/10/2019', null)
+		   ,(19, 17 ,'1/19/2019', null)
+		   ,(11, 18 ,'7/02/2019', null)
+		   ,(5, 19 ,'7/09/2019', null)
+		   ,(8, 20 ,'7/04/2019', null)
 GO
 
 -- Updateing "Dreams and nightmares" to correct name in CD_inventory table
@@ -213,7 +219,7 @@ SELECT [borrowerID]
            ,[borrowed_date]
            ,[returned_date])
      VALUES
-           (1, 1 ,2019-10-11, null)
+           (1, 1 ,'2019-10-11', null)
 		   
 GO
 
@@ -237,7 +243,7 @@ order by artist_name asc;
 go
 
 --select group
-select CD_name as 'CD Name', release_date as 'Release Date', group_name as 'Group Name'
+select CD_name as 'CD Name', release_date as 'Release Date', group_name as 'Group Name', artist_name as 'Artist Name'
 from Group_info
 inner join CD_inventory on Group_info.artistID = CD_inventory.artist_id
 order by [Group Name], [CD Name] asc;
@@ -249,6 +255,7 @@ from Borrowed_CD
 inner join Borrower_Info on Borrowed_CD.borrowerID = Borrower_Info.borrowerID
 inner join CD_inventory on Borrowed_CD.CD_ID = CD_inventory.CD_ID
 order by [Borrower Name], [CD Name], [Borrowed Date], [Returned Date] asc;
+go
 
 -- selecting borrowed CDs and displaying times borrowed
 select Borrowed_CD.CD_ID as 'CD ID', CD_name as 'CD Name', count(Borrowed_CD.CD_ID) as 'Times Borrowed'
@@ -256,6 +263,7 @@ from Borrowed_CD
 inner join CD_inventory on Borrowed_CD.CD_ID = CD_inventory.CD_ID
 group by Borrowed_CD.CD_ID, CD_name
 order by Borrowed_CD.CD_ID asc;
+go
 
 --selecting cds that are on loan
 select borrower_name as 'Borrower Name', CD_name as 'CD Name', borrowed_date as 'Borrowed Date', returned_date as 'Returned Date'
@@ -263,4 +271,5 @@ from Borrowed_CD
 inner join Borrower_Info on Borrowed_CD.borrowerID = Borrower_Info.borrowerID
 inner join CD_inventory on Borrowed_CD.CD_ID = CD_inventory.CD_ID
 where returned_date is null
-order by [Borrower Name], [CD Name], [Borrowed Date], [Returned Date] asc
+order by [Borrower Name], [CD Name], [Borrowed Date], [Returned Date] asc;
+go
