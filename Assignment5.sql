@@ -2,8 +2,8 @@
 * This script creates the database named disk_inventoryDV 
 * Date		Programmer		Notes
 * -------------------------------------------------------
-* 10/11/2019 David Verbeck	Assignment 4 creating select queries
-*
+* 10/22/2019 David Verbeck	Assignment 5, Added insert, update, and delete 
+*										 stored procedures
 ***********************************************************************/
 USE master;
 GO
@@ -225,7 +225,9 @@ GO
 
 -- Select queries
 
--- select query for Artist Table
+-- selects query for Artist Table
+create proc dv_artist
+as
 select CD_name as 'CD Name', release_date as 'Release Date', artist_name as 'Artist Name'
 from Artist_info
 inner join CD_inventory 
@@ -250,6 +252,7 @@ order by [Group Name], [CD Name] asc;
 go
 
 -- select disks that are borrowed
+
 select borrower_name as 'Borrower Name', CD_name as 'CD Name', borrowed_date as 'Borrowed Date', returned_date as 'Returned Date'
 from Borrowed_CD
 inner join Borrower_Info on Borrowed_CD.borrowerID = Borrower_Info.borrowerID
@@ -273,3 +276,256 @@ inner join CD_inventory on Borrowed_CD.CD_ID = CD_inventory.CD_ID
 where returned_date is null
 order by [Borrower Name], [CD Name], [Borrowed Date], [Returned Date] asc;
 go
+
+--Createing insert, update, and delete stored procedures
+
+--stored procedure for artist table
+drop proc if exists dv_Ins_Artist
+go
+create proc dv_Ins_artist
+@A_ID int,
+@A_Name varchar(50)
+as
+	begin try
+		INSERT INTO [dbo].[Artist_info]
+				   ([artistID]
+				   ,[artist_name])
+			 VALUES
+				   (@A_ID, @A_Name)
+	end try
+	begin catch
+	PRINT 'An error occurred. Row was not inserted.';
+    PRINT 'Error number: ' +
+        CONVERT(varchar(180), ERROR_NUMBER());
+    PRINT 'Error message: ' +
+        CONVERT(varchar(180), ERROR_MESSAGE());
+	end catch
+GO
+-- dv_Ins_Artist 21, 'Duke Lee'
+
+--Createing update stored procedure for artist table
+drop proc if exists dv_Upd_Artist
+go
+create proc dv_Upd_Artist
+@A_ID int,
+@A_Name varchar(50)
+as
+	begin try
+
+UPDATE [dbo].[Artist_info]
+   SET [artistID] = @A_ID
+      ,[artist_name] = @A_Name
+ WHERE [artistID] = @A_ID
+	end try
+	begin catch
+	PRINT 'An error occurred. Row was not updated.';
+    PRINT 'Error number: ' +
+        CONVERT(varchar(180), ERROR_NUMBER());
+    PRINT 'Error message: ' +
+        CONVERT(varchar(180), ERROR_MESSAGE());
+	end catch
+GO
+-- dv_Upd_Artist 21, 'Duke Smith'
+
+-- Creating delete stored procedure for artist table
+drop proc if exists dv_Del_Artist
+go
+create proc dv_Del_Artist
+@A_ID int
+as
+	begin try
+DELETE FROM [dbo].[Artist_info]
+      WHERE artistID = @A_ID
+	end try
+	begin catch
+	PRINT 'An error occurred. Row was not deleted.';
+    PRINT 'Error number: ' +
+        CONVERT(varchar(180), ERROR_NUMBER());
+    PRINT 'Error message: ' +
+        CONVERT(varchar(180), ERROR_MESSAGE());
+	end catch
+GO
+
+-- dv_Del_Artist 21
+
+---
+-- creating insert stored procedure for borrower table
+drop proc if exists dv_Ins_Borrower
+go
+create proc dv_Ins_Borrower
+@B_ID int,
+@B_Name varchar(50)
+as
+	begin try
+
+INSERT INTO [dbo].[Borrower_Info]
+           ([borrowerID]
+           ,[borrower_name])
+     VALUES
+           (@B_ID, @B_Name)
+	end try
+	begin catch
+	PRINT 'An error occurred. Row was not inserted.';
+    PRINT 'Error number: ' +
+        CONVERT(varchar(180), ERROR_NUMBER());
+    PRINT 'Error message: ' +
+        CONVERT(varchar(180), ERROR_MESSAGE());
+	end catch
+GO
+--dv_Ins_Borrower 21, 'Duke Lee'
+
+-- Creating update stored procedure for artist table
+drop proc if exists dv_Upd_Borrower
+go
+create proc dv_Upd_Borrower
+@B_ID int,
+@B_Name varchar(50)
+as
+	begin try
+
+UPDATE [dbo].[Borrower_Info]
+   SET [borrowerID] = @B_ID,
+   [borrower_name] = @B_Name
+ WHERE borrowerID = @B_ID
+
+	end try
+	begin catch
+	PRINT 'An error occurred. Row was not updated.';
+    PRINT 'Error number: ' +
+        CONVERT(varchar(180), ERROR_NUMBER());
+    PRINT 'Error message: ' +
+        CONVERT(varchar(180), ERROR_MESSAGE());
+	end catch
+GO
+
+--dv_Upd_Borrower 21, 'Duke Smith'
+
+-- Creating delete stored procedure for borrower table
+drop proc if exists dv_Del_Borrower
+go
+create proc dv_Del_Borrower
+@B_ID int
+as
+	begin try
+
+DELETE FROM [dbo].[Borrower_Info]
+      WHERE borrowerID = @B_ID
+
+	end try
+	begin catch
+	PRINT 'An error occurred. Row was not deleted.';
+    PRINT 'Error number: ' +
+        CONVERT(varchar(180), ERROR_NUMBER());
+    PRINT 'Error message: ' +
+        CONVERT(varchar(180), ERROR_MESSAGE());
+	end catch
+GO
+--dv_Del_borrower 21
+
+--
+-- Creating inset stored procedure for CD_Inventory table
+drop proc if exists dv_Ins_CD
+go
+create proc dv_Ins_CD
+@CD_ID int,
+@B_ID int,
+@A_ID int,
+@G_ID int,
+@Release date,
+@CDName varchar (60),
+@Status varchar (60),
+@Genre varchar (30)
+as
+	begin try
+
+INSERT INTO [dbo].[CD_inventory]
+           ([CD_ID]
+           ,[borrowerID]
+           ,[artist_id]
+           ,[group_id]
+           ,[release_date]
+           ,[CD_name]
+           ,[status_type]
+           ,[genre])
+     VALUES
+           (@CD_ID
+           ,@B_ID
+           ,@A_ID
+           ,@G_ID
+           ,@Release
+           ,@CDName
+           ,@Status
+           ,@Genre)
+
+	end try
+	begin catch
+	PRINT 'An error occurred. Row was not inserted.';
+    PRINT 'Error number: ' +
+        CONVERT(varchar(180), ERROR_NUMBER());
+    PRINT 'Error message: ' +
+        CONVERT(varchar(180), ERROR_MESSAGE());
+	end catch
+GO
+
+-- dv_Ins_CD 23, null, 1, null, '04/20/2000', 'data Test', 'Available','Punk'
+
+-- Creating update stored procedure for CD_Inventory table
+drop proc if exists dv_Upd_CD
+go
+create proc dv_Upd_CD
+@CD_ID int,
+@B_ID int,
+@A_ID int,
+@G_ID int,
+@Release date,
+@CDName varchar (60),
+@Status varchar (60),
+@Genre varchar (30)
+as
+	begin try
+
+UPDATE [dbo].[CD_inventory]
+   SET [CD_ID] = @CD_ID
+      ,[borrowerID] = @B_ID
+      ,[artist_id] = @A_ID
+      ,[group_id] = @G_ID
+      ,[release_date] = @Release
+      ,[CD_name] = @CDName
+      ,[status_type] = @Status
+      ,[genre] = @Genre
+ WHERE [CD_ID] = @CD_ID
+
+	end try
+	begin catch
+	PRINT 'An error occurred. Row was not updated.';
+    PRINT 'Error number: ' +
+        CONVERT(varchar(180), ERROR_NUMBER());
+    PRINT 'Error message: ' +
+        CONVERT(varchar(180), ERROR_MESSAGE());
+	end catch
+GO
+
+--dv_Upd_CD 23, null, 1, null, '04/20/2000', 'data fail', 'Available','Punk'
+
+-- Creating delete stored procedure for CD_Inventory Table
+drop proc if exists dv_Del_CD
+go
+create proc dv_Del_CD
+@CD_ID int
+as
+	begin try
+
+DELETE FROM [dbo].[CD_inventory]
+      WHERE CD_ID = @CD_ID
+
+	end try
+	begin catch
+	PRINT 'An error occurred. Row was not deleted.';
+    PRINT 'Error number: ' +
+        CONVERT(varchar(180), ERROR_NUMBER());
+    PRINT 'Error message: ' +
+        CONVERT(varchar(180), ERROR_MESSAGE());
+	end catch
+GO
+
+-- dv_Del_CD 23
